@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from course import *
 
-# This file is the "main loop"
+# This file contains the runnable main structure  
 
 
 def main():

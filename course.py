@@ -8,6 +8,7 @@ class Course():
         needed members.
         """
         # TODO: Go into url and fetch requirements, main subject etc.
+        # TODO: Multithread the calls above
         self.code = course["data-course-code"] 
         self.name = course.a.text
         self.level = info[3]
@@ -35,7 +36,7 @@ class Course():
         return '[' + self.period + '] ' + \
                 self.code + \
                 "(" + points + ": " + \
-                self.name 
+                self.name + '\n'
 
 
 # TODO: Does this really need to be a subclass?
@@ -78,5 +79,4 @@ class CourseCollection():
         self.courses.sort(key = key_fns[factor], reverse = order == 'descending')
 
     def __repr__(self):
-        return 'COURSES: ' + \
-                ''.join(['\n' + str(course) for course in self.courses])
+        return 'COURSES: \n' + ''.join(map(str, self.courses))
