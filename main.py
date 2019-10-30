@@ -48,10 +48,14 @@ def generate_html(data, filename):
         f.write("<html>\n")
         f.write(head(title("Test course heading")))
         f.write(body(
-            # TODO: Write the courses!
-            heading("This is a heading!") + 
-            paragraph("Hey, a paragraph!")))
+            # TODO: Write the courses in an ordered manner!
+            # - newlines
+            # - subheadings for ht/vt
+            heading("COURSES") + 
+            paragraph(str(data))))
         f.write("</html>")
+
+    # TODO: Make html interactive - online necessary?
 
 
 def find_courses(soup, only_advanced=True):

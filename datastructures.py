@@ -84,4 +84,4 @@ class CourseCollection():
     # TODO: A for_each function
     # TODO: to_html() in every course
     def __repr__(self):
-        return 'COURSES: \n' + ''.join(map(str, self.courses))
+        return ''.join(map(str, self.courses))
