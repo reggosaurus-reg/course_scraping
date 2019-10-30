@@ -1,7 +1,7 @@
 import time
 import requests
 from bs4 import BeautifulSoup
-from course import *
+from datastructures import *
 
 # This file contains the runnable main structure  
 
@@ -19,10 +19,40 @@ def main():
     found_courses.sort_on('period')
 
     ## Present data
-    print(found_courses)
-    #with open('courses.txt', 'w') as f:
-    #    f.write(str(found_courses))
+    #print(found_courses)
+    generate_html(found_courses, "courses.html")
     
+
+def generate_html(data, filename):
+    """ Creates (or overwrites) an html representation of CourseCollection 
+    'data' in the file 'filename'.
+    """
+    ## Functions for encapsulating content in correct html syntax
+    head = lambda content: "\n<head>\n" + content + "</head>\n"
+    body = lambda content: "\n<body>\n" + content + "</body>\n"
+    title = lambda content: "<title>" + content + "</title>\n"
+    heading = lambda content: "<h1>" + content + "</h1>\n"
+    paragraph = lambda content: "<p>" + content + "</p>\n"
+
+    # TODO: Warn if file exists and prompt the user to be sure to overwrite
+    ## To empty the file
+    with open(filename, 'w') as f:
+        f.write("<!DOCTYPE html>")
+
+    # TODO: Generate one string and write only that?
+    # i.e. call to_html() in every data object
+
+    ## Write html content
+    with open(filename, 'a') as f:
+        f.write("<!DOCTYPE html>\n")
+        f.write("<html>\n")
+        f.write(head(title("Test course heading")))
+        f.write(body(
+            # TODO: Write the courses!
+            heading("This is a heading!") + 
+            paragraph("Hey, a paragraph!")))
+        f.write("</html>")
+
 
 def find_courses(soup, only_advanced=True):
     """ Prints all course codes. 

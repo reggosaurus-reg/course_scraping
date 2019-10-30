@@ -78,5 +78,10 @@ class CourseCollection():
 
         self.courses.sort(key = key_fns[factor], reverse = order == 'descending')
 
+    def __iter__(self):
+        return iter(self.courses)
+
+    # TODO: A for_each function
+    # TODO: to_html() in every course
     def __repr__(self):
         return 'COURSES: \n' + ''.join(map(str, self.courses))
