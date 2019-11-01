@@ -21,7 +21,6 @@ def main():
 
     ## Present data
     generate_html(found_courses, "courses.html")
-    #found_courses.to_csv("csv_test.txt")
     
 
 def generate_html(data, filename):
@@ -30,21 +29,7 @@ def generate_html(data, filename):
     """
     if safe_to_write(filename):
         with open(filename, 'w') as f:
-            f.write("<!DOCTYPE html>")
-
-        # TODO: Prettier
-        style = """<style> 
-                table {
-                  font-family: arial, sans-serif;
-                  border-collapse: collapse;
-                  width: 100%;
-                }
-                td, th {
-                  border: 1px solid #dddddd;
-                  text-align: left;
-                  padding: 8px;
-                }
-                </style>"""
+            f.write("<!DOCTYPE html>\n")
 
         # TODO: Make html interactive - online necessary?
         # TODO: Generate one string and write only that?
@@ -52,12 +37,10 @@ def generate_html(data, filename):
 
         ## Write html content
         with open(filename, 'a') as f:
-            f.write("<!DOCTYPE html>\n")
             f.write("<html>\n")
-            f.write(head(style + title("Courses at U")))
+            f.write(head(
+                title("Courses at U")))
             f.write(body(
-                # TODO: Write the courses in an ordered manner!
-                # ... depending on chosen sorting
                 heading("COURSES") + 
                 paragraph(table(data))))
             f.write("</html>")

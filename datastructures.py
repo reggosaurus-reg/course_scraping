@@ -14,7 +14,7 @@ class Course():
         self.code = course["data-course-code"] 
         self.name = course.a.text
         self.level = info[3]
-        self.block = info[4]
+        self.block = info[4] # TODO: Both blocks if *
         self.url = course.a["href"]
 
         # Handles courses spanning over several periods
@@ -81,6 +81,8 @@ class CourseCollection():
                 'block': (lambda c: c.block)}
 
         self.courses.sort(key = key_fns[factor], reverse = order == 'descending')
+
+    # TODO: Filter method?
 
     def to_csv(self, filename):
         """ Prints itself to a csv file. """

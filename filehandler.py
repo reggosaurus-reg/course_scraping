@@ -15,7 +15,7 @@ def safe_to_write(filename):
 
 
 ## Functions for encapsulating content in correct html syntax
-head = lambda content: "\n<head>\n" + content + "</head>\n"
+head = lambda content: "\n<head>\n<link rel=\"stylesheet\" href=\"style.css\">\n" + content + "</head>\n"
 body = lambda content: "\n<body>\n" + content + "</body>\n"
 title = lambda content: "<title>" + content + "</title>\n"
 heading = lambda content: "<h1>" + content + "</h1>\n"
