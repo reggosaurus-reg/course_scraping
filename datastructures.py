@@ -1,4 +1,6 @@
+from filehandler import safe_to_write
 # This file contains all the classes tied to representing courses.
+
 
 class Course():
     """ Representation of a course. """
@@ -77,6 +79,25 @@ class CourseCollection():
                 'block': (lambda c: c.block)}
 
         self.courses.sort(key = key_fns[factor], reverse = order == 'descending')
+
+    def to_csv(self, filename):
+        """ Prints itself to a csv file. """
+        content = "Course code, Course name, Level, HP, Period, Block, More info\n"
+        for course in self.courses:
+            content += course.code + ", "
+            content += course.name + ", "
+            content += course.level + ", "
+            content += course.points + ", "
+            content += course.period + ", "
+            content += course.block + ", "
+            content += course.url + "\n" # TODO: Put url as hyperlink into course code
+
+        if safe_to_write(filename):
+            with open(filename, 'w') as f:
+                f.write(content)
+            print("""Wrote resulting csv to '%s'.\n""" % filename)
+        else:
+            print("Aborting csv write operation.\n")
 
     def __iter__(self):
         return iter(self.courses)
