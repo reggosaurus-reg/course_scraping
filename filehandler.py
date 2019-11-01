@@ -20,10 +20,37 @@ body = lambda content: "\n<body>\n" + content + "</body>\n"
 title = lambda content: "<title>" + content + "</title>\n"
 heading = lambda content: "<h1>" + content + "</h1>\n"
 paragraph = lambda content: "<p>" + content + "</p>\n"
+row = lambda content: "<tr>" + content + "</tr>\n"
+header = lambda content: "<th>" + content + "</th>\n"
+data = lambda content: "<td>" + content + "</td>\n"
+hyperlink = lambda content, url: "<a href= \"" + url + "\">" + content + "</a>\n"
 
-def dotlist(iterable):
+def dotlist(data):
     """ Creates an unordered html list with dots as markers. """
     res = "<ul>\n"
-    for elem in iterable:
-        res += "<li>" + str(elem) + "</li>"
+    for elem in data:
+        res += "<li>" + str(elem) + "</li>\n"
     return res + "\n</ul>"
+
+def table(collection):
+    """ Creates an html table with header and content according 
+    to CourseCollection collection.
+    """
+    res = "<table>\n"
+    heads = ""
+    for h in collection.headers:
+        heads += header(h)
+    res += row(heads)
+    
+    for course in collection:
+        data_row = ""
+        data_row += data(course.code)
+        data_row += data(hyperlink(course.name, course.url))
+        data_row += data(course.level)
+        data_row += data(course.points)
+        data_row += data(course.period)
+        data_row += data(course.block)
+        res += row(data_row)
+
+    res += "</table>\n"
+    return res

@@ -57,9 +57,9 @@ class CourseCollection():
     """ Data structure to store (unique) courses. """
 
     def __init__(self):
-        # TODO: Make it a dict, with key being most frequent sorting field
-        # Or several dicts, one for each key we'll sort after
         self.courses = []
+        self.headers = ["Course code", "Course name", 
+                "Level", "HP", "Period", "Block"]
 
     def add(self, new):
         """ Adds a course if it doesn't already exists among the courses. """
@@ -67,6 +67,8 @@ class CourseCollection():
             if course == new:
                 return
         self.courses.append(new)
+    
+    # TODO: Sort html table instead?
 
     def sort_on(self, factor, order = 'ascending'):
         """ Sorts courses on 'factor' in 'order', where
@@ -82,15 +84,14 @@ class CourseCollection():
 
     def to_csv(self, filename):
         """ Prints itself to a csv file. """
-        content = "Course code, Course name, Level, HP, Period, Block, More info\n"
+        content = str(self.headers).strip("][").replace("'",'') + "\n" 
         for course in self.courses:
             content += course.code + ", "
             content += course.name + ", "
             content += course.level + ", "
             content += course.points + ", "
             content += course.period + ", "
-            content += course.block + ", "
-            content += course.url + "\n" # TODO: Put url as hyperlink into course code
+            content += course.block + "\n"
 
         if safe_to_write(filename):
             with open(filename, 'w') as f:
