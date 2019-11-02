@@ -3,6 +3,8 @@ import pathlib
 # This file contains functions for file editing.
 
 
+## Functions for writing to file
+
 def safe_to_write(filename):
     """ Warn the user if file exists and prompts to be sure to overwrite.
     Otherwise returns that it is safe to write. 
@@ -26,6 +28,7 @@ def write(content, filename, content_type, unsafe=False):
 
 
 ## Functions for encapsulating content in correct html syntax
+
 head = lambda content: "\n<head>\n<link rel=\"stylesheet\" href=\"style.css\">\n" + content + "</head>\n"
 body = lambda content: "\n<body>\n" + content + "</body>\n"
 title = lambda content: "<title>" + content + "</title>\n"
@@ -37,6 +40,7 @@ data_left = lambda content: "<td class=\"data_left\">" + content + "</td>\n"
 data = lambda content: "<td>" + content + "</td>\n"
 hyperlink = lambda content, url: "<a href= \"" + url + "\">" + content + "</a>\n"
 
+
 def dotlist(data):
     """ Creates an unordered html list with dots as markers. """
     res = "<ul>\n"
@@ -44,3 +48,22 @@ def dotlist(data):
         res += "<li>" + str(elem) + "</li>\n"
     return res + "\n</ul>"
 
+
+## Functions for encapsulating content in correct csv syntax
+
+def comma_to_csv(data):
+    """ Takes data as a list or a string and encapsulates it in 
+    a string on form "elem1, elem2..." 
+    i.e. csv data element with comma. 
+    """
+    if isinstance(data, str):
+        if "," in data:
+            return "\"" + data + "\""
+        else:
+            return data
+
+    if len(data) == 1:
+        data = data[0]
+    else:
+        data = "\"" + ', '.join(data) + "\"" 
+    return data 

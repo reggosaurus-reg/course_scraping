@@ -15,12 +15,12 @@ class Course():
         self.code = course["data-course-code"] 
         self.name = course.a.text
         self.level = info[3]
-        self.block = info[4] # TODO: Both blocks if *
+        self.blocks = [info[4]] # List to allow several blocks 
         self.url = course.a["href"]
 
         page = requests.get(self.url)
         soup = BeautifulSoup(page.text, features="html5lib") 
-        self.area =self.parse_areas(list(
+        self.areas =self.parse_areas(list(
             soup.find('div', attrs={'class': 'overview col-md-7'}).text.split()))
 
         # Handles courses spanning over several periods
@@ -79,9 +79,12 @@ class CourseCollection():
         return not self.courses
 
     def add(self, new):
-        """ Adds a course if it doesn't already exists among the courses. """
+        """ Adds a course if it doesn't already exists among the courses.
+        If it exists and span over several periods, updates the blocks.
+        """
         for course in self.courses:
-            if course == new:
+            if course == new and len(course.blocks) == 1:
+                course.blocks = course.blocks + new.blocks 
                 return
         self.courses.append(new)
         self.sort_on('name')
@@ -95,7 +98,7 @@ class CourseCollection():
                 'name': (lambda c: c.name),
                 'points': (lambda c: c.points),
                 'period':(lambda c: c.period),
-                'block': (lambda c: c.block)}
+                'block': (lambda c: c.blocks)}
 
         self.courses.sort(key = key_fns[factor], reverse = order == 'descending')
 
@@ -107,21 +110,14 @@ class CourseCollection():
         """
         content = str(self.headers).strip("][").replace("'",'') + "\n" 
         for course in self.courses:
-            areas = course.area
-            if len(areas) == 1:
-                areas = areas[0]
-            else:
-                areas = "\"" + ', '.join(areas) + "\"" 
-
-
             row = "" \
                 + course.code + ", " \
-                + course.name + ", " \
+                + comma_to_csv(course.name) + ", " \
                 + course.level + ", " \
-                + areas + ", " \
+                + comma_to_csv(course.areas) + ", " \
                 + course.points + ", " \
                 + course.period + ", " \
-                + course.block + "\n"
+                + comma_to_csv(course.blocks) + "\n"
             content += row
         return content
 
@@ -153,11 +149,11 @@ class CourseCollection():
             data_row = "" \
                 + data(course.code) \
                 + data_left(hyperlink(course.name, course.url)) \
-                + data_left(', '.join(course.area)) \
+                + data_left(', '.join(course.areas)) \
                 + data(course.level) \
                 + data(course.points) \
                 + data(course.period) \
-                + data(course.block)
+                + data(', '.join(course.blocks))
             res += row(data_row)
         res += "</table>\n"
         return res

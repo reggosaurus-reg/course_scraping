@@ -62,7 +62,7 @@ def find_courses(soup, only_advanced=True):
                         return
                     nonlocal stop_threads
                     if stop_threads:
-                        break
+                        return
 
             thread = threading.Thread(target=find_courses_in_period)
             threads.append(thread)
