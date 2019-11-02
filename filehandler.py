@@ -22,6 +22,7 @@ heading = lambda content: "<h1>" + content + "</h1>\n"
 paragraph = lambda content: "<p>" + content + "</p>\n"
 row = lambda content: "<tr>" + content + "</tr>\n"
 header = lambda content: "<th>" + content + "</th>\n"
+data_left = lambda content: "<td class=\"data_left\">" + content + "</td>\n"
 data = lambda content: "<td>" + content + "</td>\n"
 hyperlink = lambda content, url: "<a href= \"" + url + "\">" + content + "</a>\n"
 
@@ -45,7 +46,8 @@ def table(collection):
     for course in collection:
         data_row = ""
         data_row += data(course.code)
-        data_row += data(hyperlink(course.name, course.url))
+        data_row += data_left(hyperlink(course.name, course.url))
+        data_row += data_left(', '.join(course.area))
         data_row += data(course.level)
         data_row += data(course.points)
         data_row += data(course.period)

@@ -1,4 +1,5 @@
 import time
+import threading
 import requests
 from bs4 import BeautifulSoup
 from filehandler import *
@@ -10,24 +11,31 @@ from datastructures import *
 def main():
     """ MAIN, ju. """
     ## Get data
+    print("Downloading... (0%)\r", end='')
     page = requests.get('https://liu.se/studieinfo/program/6cmju/4208#')
     soup = BeautifulSoup(page.text, features="html5lib") 
-    # TODO: Read from file with finished courses... 
+    # TODO: Read from file with finished course codes (or ladok)...
 
     ## Process data
-    # TODO: ...then filter those courses from found courses
+
+    # TODO: ...then mark those courses with a tag and make a css class
+    # TODO: Only fetch data if haven't fetch for... a week? Save it somewhere.
+    # ... perhaps a csv, this time?
     found_courses = find_courses(soup) # Add false to include not advanced
-    found_courses.sort_on('period')
+
+    # TODO: Some database like sorting on (several) field with JavaScript...
+    found_courses.sort_on('block')
 
     ## Present data
     generate_html(found_courses, "courses.html")
+    #found_courses.to_csv("courses.txt")
     
 
 def generate_html(data, filename):
     """ Creates (or overwrites) an html representation of CourseCollection 
     'data' in the file 'filename'.
     """
-    if safe_to_write(filename):
+    if True: #safe_to_write(filename):
         with open(filename, 'w') as f:
             f.write("<!DOCTYPE html>\n")
 
@@ -56,6 +64,8 @@ def find_courses(soup, only_advanced=True):
     """
     found_courses = CourseCollection() 
 
+    threads = []
+    stop_threads = False
     for semester_tag in soup.find_all('article', 
             attrs={'class': 'accordion box semester js-semester is-toggled'}):
         when = str(semester_tag.header.h3).split('(')[1][:-6]
@@ -64,21 +74,53 @@ def find_courses(soup, only_advanced=True):
         for period_tag in semester_tag.find_all('tbody', attrs={'class': 'period'}):
             vthtnum = str(period_tag.th.text).split()[1]
 
-            for course_tag in period_tag.find_all('tr', attrs={'class': 'main-row'}):
-                ## Filter courses
-                info = extract_tds(course_tag)
-                if only_advanced:
-                    level = info[3]
-                    if level[0] != "A":
-                        continue
+            ## For threading
+            def find_courses_in_period():
+                """ Finds and the courses in period_tag. """
+                for course_tag in period_tag.find_all('tr', attrs={'class': 'main-row'}):
+                    ## Filter courses
+                    info = extract_tds(course_tag)
+                    if only_advanced:
+                        level = info[3]
+                        if level[0] != "A":
+                            continue
 
-                found_courses.add(Course(course_tag, info, vtht, vthtnum))
+                    found_courses.add(Course(course_tag, info, vtht, vthtnum))
+                    nonlocal stop_threads
+                    if stop_threads:
+                        break
+
+            thread = threading.Thread(target=find_courses_in_period)
+            threads.append(thread)
+            thread.start()
+
+    ## Show progress
+    finished = 0
+    total = len(threads)
+    while threads:
+        try:
+            for thread in threads:
+                if not thread.is_alive():
+                    thread.join()
+                    threads.remove(thread)
+                    finished += 1
+                    print("Downloading... (" + \
+                            str(round(100 * finished/total)) + "%)\r" , end='')
+        ## Abort download
+        except KeyboardInterrupt:
+            print("Downloading... (" + \
+                    str(round(100 * finished/total)) + "%) \nAborting...")
+            stop_threads = True
+            time.sleep(1)
+            for thread in threads:
+                thread.join()
+            exit("Yay, download was aborted!")
 
     return found_courses
 
 
 def extract_tds(course):
-    """ Takes a tag 'course' and gives a list with all of its td tags. """
+    """ takes a tag 'course' and gives a list with all of its td tags. """
     res = []
     for td in course.find_all('td'):
         res.append(str(td).strip()[4:-5])
@@ -88,4 +130,4 @@ def extract_tds(course):
 if __name__ == "__main__":
     start_time = time.time()
     main()
-    print("Execution took", time.time() - start_time, "seconds.")
+    print("Execution took", round(time.time() - start_time, ndigits=2), "seconds.")
