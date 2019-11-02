@@ -107,11 +107,18 @@ class CourseCollection():
         """
         content = str(self.headers).strip("][").replace("'",'') + "\n" 
         for course in self.courses:
-            # TODO: Add areas
+            areas = course.area
+            if len(areas) == 1:
+                areas = areas[0]
+            else:
+                areas = "\"" + ', '.join(areas) + "\"" 
+
+
             row = "" \
                 + course.code + ", " \
                 + course.name + ", " \
                 + course.level + ", " \
+                + areas + ", " \
                 + course.points + ", " \
                 + course.period + ", " \
                 + course.block + "\n"

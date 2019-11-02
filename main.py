@@ -27,7 +27,7 @@ def main():
 
     ## Present data
     write(found_courses.to_html(), "courses.html", "html", unsafe=True)
-    #write(found_courses.to_csv(), "courses_csv.txt", "csv")
+    write(found_courses.to_csv(), "courses_csv.txt", "csv")
 
 
 def find_courses(soup, only_advanced=True):
