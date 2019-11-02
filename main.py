@@ -2,7 +2,6 @@ import time
 import threading
 import requests
 from bs4 import BeautifulSoup
-from filehandler import *
 from datastructures import *
 
 # This file contains the runnable main structure  
@@ -15,47 +14,20 @@ def main():
     page = requests.get('https://liu.se/studieinfo/program/6cmju/4208#')
     soup = BeautifulSoup(page.text, features="html5lib") 
     # TODO: Read from file with finished course codes (or ladok)...
+    # ...then mark those courses with a tag and make a css class
+    # TODO: Only fetch data if haven't fetch for... a week? Save it somewhere.
+    # ... perhaps a csv, this time?
 
     ## Process data
 
-    # TODO: ...then mark those courses with a tag and make a css class
-    # TODO: Only fetch data if haven't fetch for... a week? Save it somewhere.
-    # ... perhaps a csv, this time?
     found_courses = find_courses(soup) # Add false to include not advanced
 
     # TODO: Some database like sorting on (several) field with JavaScript...
     found_courses.sort_on('block')
 
     ## Present data
-    generate_html(found_courses, "courses.html")
-    #found_courses.to_csv("courses.txt")
-    
-
-def generate_html(data, filename):
-    """ Creates (or overwrites) an html representation of CourseCollection 
-    'data' in the file 'filename'.
-    """
-    if True: #safe_to_write(filename):
-        with open(filename, 'w') as f:
-            f.write("<!DOCTYPE html>\n")
-
-        # TODO: Make html interactive - online necessary?
-        # TODO: Generate one string and write only that?
-        # i.e. call to_html() in every data object
-
-        ## Write html content
-        with open(filename, 'a') as f:
-            f.write("<html>\n")
-            f.write(head(
-                title("Courses at U")))
-            f.write(body(
-                heading("COURSES") + 
-                paragraph(table(data))))
-            f.write("</html>")
-
-        print("""Wrote resulting html to '%s'.\n""" % filename)
-    else:
-        print("Aborting html write operation.\n")
+    write(found_courses.to_html(), "courses.html", "html", unsafe=True)
+    #write(found_courses.to_csv(), "courses_csv.txt", "csv")
 
 
 def find_courses(soup, only_advanced=True):
@@ -86,6 +58,8 @@ def find_courses(soup, only_advanced=True):
                             continue
 
                     found_courses.add(Course(course_tag, info, vtht, vthtnum))
+                    if not found_courses.is_empty():
+                        return
                     nonlocal stop_threads
                     if stop_threads:
                         break
@@ -93,6 +67,7 @@ def find_courses(soup, only_advanced=True):
             thread = threading.Thread(target=find_courses_in_period)
             threads.append(thread)
             thread.start()
+
 
     ## Show progress
     finished = 0

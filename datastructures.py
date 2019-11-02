@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from filehandler import safe_to_write
+from filehandler import *
 
 # This file contains all the classes tied to representing courses.
 
@@ -12,8 +12,6 @@ class Course():
         """ Takes a course tag 'course' and some info and extracts all 
         needed members.
         """
-        # TODO: Go into url and fetch requirements, main subject etc.
-        # TODO: Multithread the calls above
         self.code = course["data-course-code"] 
         self.name = course.a.text
         self.level = info[3]
@@ -60,7 +58,6 @@ class Course():
 
     def __repr__(self):
         """ Prints the course. """ 
-        # TODO: Print info better - some sort of "compilable" excel? CSV?
         points = self.points
         points = points + ')' if len(points) == 2 else points + ') ' 
         return '[' + self.period + '] ' + \
@@ -89,8 +86,6 @@ class CourseCollection():
         self.courses.append(new)
         self.sort_on('name')
     
-    # TODO: Sort html table instead?
-
     def sort_on(self, factor, order = 'ascending'):
         """ Sorts courses on 'factor' in 'order', where
         factor = {'code',  'name', points',  'period', block'}
@@ -106,29 +101,62 @@ class CourseCollection():
 
     # TODO: Filter method?
 
-    def to_csv(self, filename):
-        """ Prints itself to a csv file. """
+    def to_csv(self):
+        """ Returns a string: 
+        a csv representation of the collection content. 
+        """
         content = str(self.headers).strip("][").replace("'",'') + "\n" 
         for course in self.courses:
-            content += course.code + ", "
-            content += course.name + ", "
             # TODO: Add areas
-            content += course.level + ", "
-            content += course.points + ", "
-            content += course.period + ", "
-            content += course.block + "\n"
+            row = "" \
+                + course.code + ", " \
+                + course.name + ", " \
+                + course.level + ", " \
+                + course.points + ", " \
+                + course.period + ", " \
+                + course.block + "\n"
+            content += row
+        return content
 
-        if safe_to_write(filename):
-            with open(filename, 'w') as f:
-                f.write(content)
-            print("""Wrote resulting csv to '%s'.\n""" % filename)
-        else:
-            print("Aborting csv write operation.\n")
+    def to_html(self):
+        """ Returns a string:
+        an html representation of the collection content. 
+        """
+        html = "<!DOCTYPE html>\n" \
+                + "<html>\n" \
+                + head( 
+                        title("Courses at U")) \
+                + body(
+                        heading("Courses at Mjukvaruteknik LiU") + 
+                        paragraph(self.to_html_table())) \
+                + "</html>"
+        return html
+
+    def to_html_table(self):
+        """ Returns a string:
+        the collection content as an html table.
+        """
+        res = "<table>\n"
+        heads = ""
+        for h in self.headers:
+            heads += header(h)
+        res += row(heads)
+
+        for course in self.courses:
+            data_row = "" \
+                + data(course.code) \
+                + data_left(hyperlink(course.name, course.url)) \
+                + data_left(', '.join(course.area)) \
+                + data(course.level) \
+                + data(course.points) \
+                + data(course.period) \
+                + data(course.block)
+            res += row(data_row)
+        res += "</table>\n"
+        return res
 
     def __iter__(self):
         return iter(self.courses)
 
-    # TODO: A for_each function
-    # TODO: to_html() in every course
     def __repr__(self):
         return ''.join(map(str, self.courses))
