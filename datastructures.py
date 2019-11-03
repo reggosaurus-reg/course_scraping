@@ -71,8 +71,8 @@ class CourseCollection():
 
     def __init__(self):
         self.courses = []
-        self.headers = ["Course code", "Course name", "Main area(s)",
-                "Level", "HP", "Period", "Block"]
+        self.headers = ["Kurskod", "Kurstitel", "Huvudområde(n)",
+                "Nivå", "HP", "Period", "Block"]
 
     def is_empty(self):
         """ Returns True id CourseCollection contains no courses. """
@@ -128,9 +128,9 @@ class CourseCollection():
         html = "<!DOCTYPE html>\n" \
                 + "<html>\n" \
                 + head(script("text/javascript", "table_sorter.js") + 
-                       title("Courses at U")) \
+                       title("Kurser på U")) \
                 + body(
-                        heading("Courses at Mjukvaruteknik LiU") + 
+                        heading("Kurser på Mjukvaruteknik LiU") + 
                         paragraph(self.to_html_table())) \
                 + "</html>"
         return html
