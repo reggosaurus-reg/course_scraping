@@ -127,8 +127,8 @@ class CourseCollection():
         """
         html = "<!DOCTYPE html>\n" \
                 + "<html>\n" \
-                + head( 
-                        title("Courses at U")) \
+                + head(script("text/javascript", "table_sorter.js") + 
+                       title("Courses at U")) \
                 + body(
                         heading("Courses at Mjukvaruteknik LiU") + 
                         paragraph(self.to_html_table())) \

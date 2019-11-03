@@ -29,16 +29,17 @@ def write(content, filename, content_type, unsafe=False):
 
 ## Functions for encapsulating content in correct html syntax
 
-head = lambda content: "\n<head>\n<link rel=\"stylesheet\" href=\"style.css\">\n" + content + "</head>\n"
-body = lambda content: "\n<body>\n" + content + "</body>\n"
-title = lambda content: "<title>" + content + "</title>\n"
-heading = lambda content: "<h1>" + content + "</h1>\n"
-paragraph = lambda content: "<p>" + content + "</p>\n"
-row = lambda content: "<tr>" + content + "</tr>\n"
-header = lambda content: "<th>" + content + "</th>\n"
-data_left = lambda content: "<td class=\"data_left\">" + content + "</td>\n"
-data = lambda content: "<td>" + content + "</td>\n"
-hyperlink = lambda content, url: "<a href= \"" + url + "\">" + content + "</a>\n"
+head = lambda content: "\n<head>\n<link rel=\"stylesheet\" href=\"style.css\">\n %s </head>\n" % content
+body = lambda content: "\n<body>\n %s </body>\n" % content
+title = lambda content: "<title> %s </title>\n" % content
+heading = lambda content: "<h1> %s </h1>\n" % content
+paragraph = lambda content: "<p> %s </p>\n" % content
+row = lambda content: "<tr> %s </tr>\n" % content
+header = lambda content: "<th> %s </th>\n" % content
+data_left = lambda content: "<td class=\"data_left\"> %s </td>\n" % content
+data = lambda content: "<td> %s </td>\n" % content
+hyperlink = lambda content, url: "<a href= \"%s\"> %s </a>\n" % (url, content)
+script = lambda type_, src: "<script type= \"%s\" src=\"%s\"></script>\n" % (type_, src)
 
 
 def dotlist(data):
