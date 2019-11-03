@@ -83,7 +83,7 @@ class CourseCollection():
         If it exists and span over several periods, updates the blocks.
         """
         for course in self.courses:
-            if course == new and len(course.blocks) == 1:
+            if course == new and course.period[2] == '*' and len(course.blocks) == 1:
                 course.blocks = course.blocks + new.blocks 
                 return
         self.courses.append(new)

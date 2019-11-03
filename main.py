@@ -23,11 +23,11 @@ def main():
     found_courses = find_courses(soup) # Add false to include not advanced
 
     # TODO: Some database like sorting on (several) field with JavaScript...
-    found_courses.sort_on('block')
+    found_courses.sort_on('period')
 
     ## Present data
     write(found_courses.to_html(), "courses.html", "html", unsafe=True)
-    write(found_courses.to_csv(), "courses_csv.txt", "csv")
+    #write(found_courses.to_csv(), "courses_csv.txt", "csv")
 
 
 def find_courses(soup, only_advanced=True):
