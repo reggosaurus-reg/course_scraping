@@ -3,6 +3,16 @@ import pathlib
 # This file contains functions for file editing.
 
 
+def correct_type(data, type_):
+    """ Returns data if it is of type type_, otherwise raises an 
+    exception. 
+    """
+    if isinstance(data, type_):
+        return data
+    else:
+        raise Exception("Wrong type: %s is not a(n) %s." % (data, type_))
+
+
 ## Functions for writing to file
 
 def safe_to_write(filename):

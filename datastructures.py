@@ -12,26 +12,26 @@ class Course():
         """ Takes a course tag 'course' and some info and extracts all 
         needed members.
         """
-        self.code = course["data-course-code"] 
-        self.name = course.a.text
-        self.level = info[3]
-        self.blocks = [info[4]] # List to allow several blocks 
-        self.url = course.a["href"]
+        self.code = correct_type(course["data-course-code"], str) 
+        self.name = correct_type(course.a.text, str)
+        self.level = correct_type(info[3], str)
+        self.blocks = correct_type([info[4]], list) # List to allow several blocks 
+        self.url = correct_type(course.a["href"], str)
 
         page = requests.get(self.url)
         soup = BeautifulSoup(page.text, features="html5lib") 
-        self.areas =self.parse_areas(list(
+        self.areas = self.parse_areas(list(
             soup.find('div', attrs={'class': 'overview col-md-7'}).text.split()))
 
         # Handles courses spanning over several periods
         # period: VT/HT + 1, 2 or '*' (means both)
         points = info[2]
         if points[-1] == '*':
-            self.points = points[:-1] 
+            self.points = points[:-1] # What type?? correct_type()
             self.period = vtht + '*'  
         else:
             self.points = points
-            self.period = vtht + period_num
+            self.period = correct_type(vtht + period_num, str)
 
     def parse_areas(self, seq):
         """ Returns a new list with all area pieces from seq as coherent
