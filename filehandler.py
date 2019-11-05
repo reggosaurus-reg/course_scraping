@@ -3,6 +3,8 @@ import pathlib
 # This file contains functions for file editing.
 
 
+## Random functions?
+
 def correct_type(data, type_):
     """ Returns data if it is of type type_, otherwise raises an 
     exception. 
@@ -11,6 +13,11 @@ def correct_type(data, type_):
         return data
     else:
         raise Exception("Wrong type: %s is not a(n) %s." % (data, type_))
+
+
+def csv_string_to_list(string):
+    """ Returns a string "abc, def" as a list ['abc', 'def']. """
+    return list(map(lambda s: s.strip(), string.split(',')))
 
 
 ## Functions for writing to file

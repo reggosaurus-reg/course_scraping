@@ -8,10 +8,20 @@ from filehandler import *
 class Course():
     """ Representation of a course. """
 
-    def __init__(self, course, info, vtht, period_num):
+    def __init__(self, *args):
         """ Takes a course tag 'course' and some info and extracts all 
         needed members.
         """
+        if len(args) == 4:
+            self.init_from_soup(args[0], args[1], args[2], args[3])
+        elif len(args) == 8:
+            self.init_from_csv(args)
+        else:
+            # TODO: Halt program if exception is thrown?
+            raise Exception("Course takes 4 or 8 initial parameters, \
+                    %d where given." % len(args))
+    
+    def init_from_soup(self, course, info, vtht, period_num):
         self.code = correct_type(course["data-course-code"], str) 
         self.name = correct_type(course.a.text, str)
         self.level = correct_type(info[3], str)
@@ -32,6 +42,16 @@ class Course():
         else:
             self.points = points
             self.period = correct_type(vtht + period_num, str)
+
+    def init_from_csv(self, args):
+        self.code = correct_type(args[0], str)
+        self.name = correct_type(args[1], str)
+        self.level = correct_type(args[2], str)
+        self.blocks = correct_type(args[3], list)
+        self.url = correct_type(args[4], str)
+        self.areas = correct_type(args[5], list)
+        self.points = correct_type(args[6], str)
+        self.period = correct_type(args[7], str)
 
     def parse_areas(self, seq):
         """ Returns a new list with all area pieces from seq as coherent
@@ -108,16 +128,19 @@ class CourseCollection():
         """ Returns a string: 
         a csv representation of the collection content. 
         """
+        # TODO: Use csv write
         content = str(self.headers).strip("][").replace("'",'') + "\n" 
+        delimiter = ","
         for course in self.courses:
             row = "" \
-                + course.code + ", " \
-                + comma_to_csv(course.name) + ", " \
-                + course.level + ", " \
-                + comma_to_csv(course.areas) + ", " \
-                + course.points + ", " \
-                + course.period + ", " \
-                + comma_to_csv(course.blocks) + "\n"
+                + course.code + delimiter \
+                + comma_to_csv(course.name) + delimiter \
+                + course.level + delimiter \
+                + comma_to_csv(course.areas) + delimiter \
+                + course.points + delimiter \
+                + course.period + delimiter \
+                + comma_to_csv(course.blocks) + delimiter \
+                + comma_to_csv(course.url) + "\n"
             content += row
         return content
 

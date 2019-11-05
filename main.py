@@ -1,3 +1,4 @@
+import csv
 import time
 import threading
 import requests
@@ -10,24 +11,52 @@ from datastructures import *
 def main():
     """ MAIN, ju. """
     ## Get data
-    print("Downloading... (0%)\r", end='')
-    page = requests.get('https://liu.se/studieinfo/program/6cmju/4208#')
-    soup = BeautifulSoup(page.text, features="html5lib") 
-    # TODO: Read from file with finished course codes (or ladok)...
-    # ...then mark those courses with a tag and make a css class
-    # TODO: Only fetch data if haven't fetch for... a week? Save it somewhere.
-    # ... perhaps a csv, this time?
+    data_filename = "courses.csv"
+    data_fetch = str(input(
+        "Do you wish to load latest data version or download new data? (L/d) "))
+    if not data_fetch:
+        data_fetch = 'L' 
+
+    if (data_fetch in 'Dd'):
+        print("Downloading... (0%)\r", end='')
+        page = requests.get('https://liu.se/studieinfo/program/6cmju/4208#')
+        soup = BeautifulSoup(page.text, features="html5lib") 
+        # TODO: Read from file with finished course codes (or ladok)...
+        # ...then mark those courses with a tag and make a css class
+        found_courses = find_courses(soup) # Add false to include not advanced
+    elif (data_fetch in 'Ll'):
+        found_courses = read_courses_from_file(data_filename)
 
     ## Process data
-
-    found_courses = find_courses(soup) # Add false to include not advanced
-
     # TODO: Some database like sorting on (several) field with JavaScript...
     found_courses.sort_on('period')
 
     ## Present data
     write(found_courses.to_html(), "courses.html", "html", unsafe=True)
-    #write(found_courses.to_csv(), "courses_csv.txt", "csv")
+    write(found_courses.to_csv(), data_filename, "csv")
+
+
+def read_courses_from_file(filename):
+    """ Takes a file with a course table saved as a csv table and returns
+    a CourseCollection with the data. 
+    """
+    courses = CourseCollection()
+    with open(filename, 'r') as f:  
+        content = csv.reader(f, delimiter=',', quotechar='"')
+        next(content) # headers - not interested in headers?
+        for row in content:
+            code = row[0]
+            name = row[1]
+            level = row[2]
+            areas = csv_string_to_list(row[3]) 
+            points = row[4]
+            period = row[5]
+            blocks = csv_string_to_list(row[6])
+            url = row[7]
+
+            course = Course(code, name, level, blocks, url, areas, points, period)
+            courses.add(course) 
+    return courses
 
 
 def find_courses(soup, only_advanced=True):
@@ -104,5 +133,6 @@ def extract_tds(course):
 
 if __name__ == "__main__":
     start_time = time.time()
+    #read_courses_from_file("courses.csv")
     main()
     print("Execution took", round(time.time() - start_time, ndigits=2), "seconds.")

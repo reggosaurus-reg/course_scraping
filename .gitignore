@@ -1,6 +1,7 @@
 # Data files
 *.txt
 *.html
+*.csv
 
 #
 # Byte-compiled / optimized / DLL files
