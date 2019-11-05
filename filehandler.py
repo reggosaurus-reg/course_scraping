@@ -52,7 +52,7 @@ title = lambda content: "<title> %s </title>\n" % content
 heading = lambda content: "<h1> %s </h1>\n" % content
 paragraph = lambda content: "<p> %s </p>\n" % content
 row = lambda content: "<tr> %s </tr>\n" % content
-header = lambda content: "<th> %s </th>\n" % content
+header = lambda content: "<th class='unsorted'> %s </th>\n" % content
 data_left = lambda content: "<td class=\"data_left\"> %s </td>\n" % content
 data = lambda content: "<td> %s </td>\n" % content
 hyperlink = lambda content, url: "<a href= \"%s\"> %s </a>\n" % (url, content)

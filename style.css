@@ -1,6 +1,5 @@
 /* This file contains the styling for the html page. */
 
-
 table {
 	font-family: arial, sans-serif;
 	border-collapse: collapse;
@@ -17,9 +16,31 @@ td.data_left {
 	text-align: left;
 }
 
+#sorting {
+	font-style: italic;
+}
+
 th {
 	background: #AAA;
 }
+
+th.ascending {
+	background: #7A7;
+}
+
+th.descending {
+	background: #A77;
+}
+
+th:hover {
+	color: #555;
+	font-style: italic;
+}
+
+tr:hover {
+	background: #EEE;
+}
+
 a {
 	text-decoration: none;
 }
